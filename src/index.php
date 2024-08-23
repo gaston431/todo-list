@@ -53,29 +53,28 @@
                     $('#submit').removeAttr('disabled')
             })
 
-            let base_url = "controllers/"
-
             //get
             $.ajax({
-                url: base_url + "index.php",
+                url: "/items.php",
                 method: "GET",
                 //data: $(this).serialize(),
             }).done(function(response) {
-                //console.log(response)
-                let items = JSON.parse(response)
+                console.log(response)
+                //let items = JSON.parse(response)
+                let items = response
                 for (let i = 0; i < items.length; i++) {
-                    const item = response[i];
+                    const item = items[i];
 
                     //console.log(items[i])
-                    let completed = items[i].completed ? 'completed' : 'false'
-                    let square = items[i].completed ? 'fa-check-square' : 'fa-square'
+                    let completed = item.completed ? 'completed' : 'false'
+                    let square = item.completed ? 'fa-check-square' : 'fa-square'
 
                     $('#items').append(
                         '<div class="item ' + completed + ' container-fluid">' +
                         '<div class="row">' +
-                        '<div class="text-center col-1"><button data-id="' + items[i].id + '" aria-label="Mark item as complete" type="button" class="toggles btn btn-link btn-sm"><i class="far ' + square + '"></i></button></div>' +
-                        '<div class="name col-10">' + items[i].name + '</div>' +
-                        '<div class="text-center remove col-1"><button data-id="' + items[i].id + '" aria-label="Remove Item" type="button" class="remove btn btn-link btn-sm"><i class="fa fa-trash text-danger"></i></button></div>' +
+                        '<div class="text-center col-1"><button data-id="' + item.id + '" aria-label="Mark item as complete" type="button" class="toggles btn btn-link btn-sm"><i class="far ' + square + '"></i></button></div>' +
+                        '<div class="name col-10">' + item.name + '</div>' +
+                        '<div class="text-center col-1"><button data-id="' + item.id + '" aria-label="Remove Item" type="button" class="remove btn btn-link btn-sm"><i class="fa fa-trash text-danger"></i></button></div>' +
                         '</div>' +
                         '</div>'
                     )
@@ -88,21 +87,22 @@
                 console.log('add')
 
                 $.ajax({
-                    url: base_url + "store.php",
+                    url: "/items.php",
                     method: "POST",
                     data: {
                         name: $('input').val()
                     },
                 }).done(function(response) {
-                    
-                    let item_id = JSON.parse(response)
+                    //console.log(response)
+                    let item_id = response
+                    //let item_id = JSON.parse(response)
                     
                     $('#items').append(
                         '<div class="item false container-fluid">' +
                         '<div class="row">' +
                         '<div class="text-center col-1"><button data-id="' + item_id + '" response aria-label="Mark item as complete" type="button" class="toggles btn btn-link btn-sm"><i class="far fa-square"></i></button></div>' +
                         '<div class="name col-10">' + $("input").val() + '</div>' +
-                        '<div class="text-center remove col-1"><button data-id="' + item_id + '" aria-label="Remove Item" type="button" class="remove btn btn-link btn-sm"><i class="fa fa-trash text-danger"></i></button></div>' +
+                        '<div class="text-center col-1"><button data-id="' + item_id + '" aria-label="Remove Item" type="button" class="remove btn btn-link btn-sm"><i class="fa fa-trash text-danger"></i></button></div>' +
                         '</div>' +
                         '</div>'
                     )
@@ -121,13 +121,12 @@
                 let completed = Number(!div.hasClass('completed'))
 
                 $.ajax({
-                    url: base_url + "update.php",
-                    method: "POST",
-                    //dataType: "json",
+                    url: "/items.php/" + item_id,
+                    method: "PATCH",
+                    //contentType: "json",
                     data: {
-                        item_id: item_id,
                         completed: completed,
-                        _method: "PATCH"
+                        //_method: "PUT"
                     },
                 }).done(function(response) {
                     console.log(response)
@@ -145,24 +144,20 @@
 
             //delete
             $(document).on('click', '.remove', function() {
-
+                
                 let item_id = $(this).data('id')
-                const button = $(this)
-                const div = $(this).parent().parent()
-                let completed = Number(!div.hasClass('completed'))
+                const div = $(this).parent().parent().parent()
 
                 $.ajax({
-                    url: base_url + "delete.php",
-                    method: "POST",
+                    url: "/items.php/" + item_id,
+                    method: "DELETE",
                     //dataType: "json",
-                    data: {
-                        item_id: item_id,
-                        _method: "DELETE"
-                    },
+                    /* data: {
+                        //item_id: $(this).data('id'),
+                        //_method: "DELETE"
+                    }, */
                 }).done(function(response) {
-          
                     div.remove()
-                    
                 })
             })
 

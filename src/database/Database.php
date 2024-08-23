@@ -49,12 +49,12 @@ class Database
         return $this->statement->fetchAll();
     }
 
-    /* public function find()
+    public function find()
     {
         return $this->statement->fetch();
     }
 
-    public function findOrFail()
+    /* public function findOrFail()
     {
         $result = $this->find();
 
